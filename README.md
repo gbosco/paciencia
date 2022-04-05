@@ -1,3 +1,5 @@
 # paciencia
 
-Projeto criado por Gustavo Bosco para matéria de programação no curso de sistemas de informação (UDESC)
+Projeto criado por Gustavo Bosco
+para matéria de programação II
+no curso de sistemas de informação (UDESC).
