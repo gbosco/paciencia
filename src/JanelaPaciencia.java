@@ -6,20 +6,20 @@ import java.util.List;
 import javax.swing.*;
 
 public class JanelaPaciencia extends JFrame{
-public static final int BARRA_SUP          = 30;
+    public static final int BARRA_SUP      = 30;
     public static final int BARRA_LATERAL  = 4;
 
-    private JLayeredPane mesa = getLayeredPane();
+    private final JLayeredPane mesa;
 
-    private List<PilhaCartaFinal> pilhasCartaFinal = new ArrayList<>();
-    private List<PilhaCartaMesa> pilhasCartaMesa   = new ArrayList<>();
-    private PilhaCartaMonte pilhaCartaMonte;    
-    private List<Carta> baralhoCompleto = new ArrayList<Carta>();
+    private final List<PilhaCartaFinal> pilhasCartaFinal;
+    private final List<PilhaCartaMesa> pilhasCartaMesa;
+    private final PilhaCartaMonte pilhaCartaMonte;    
+    private final List<Carta> baralhoCompleto;
     
     private List<Carta> cartasAreaTransferencia;
     
-    private MovimentaCarta movimentoCartas = new MovimentaCarta(this, null);
-    private Thread thread = new Thread(movimentoCartas);
+    private final MovimentaCarta movimentoCartas;
+    private Thread thread;
 
     private boolean cartaAreaTransferencia = false;
     private JTextField pontuacao = new JTextField("0", 10);
@@ -27,6 +27,12 @@ public static final int BARRA_SUP          = 30;
     
     public JanelaPaciencia(boolean virarTres) {
         super("Paciência");
+        this.mesa = getLayeredPane();
+        this.movimentoCartas = new MovimentaCarta(this, null);
+        this.thread = new Thread(movimentoCartas);
+        this.baralhoCompleto = new ArrayList<>();
+        this.pilhasCartaMesa = new ArrayList<>();
+        this.pilhasCartaFinal = new ArrayList<>();
         
         pilhaCartaMonte = new PilhaCartaMonte(virarTres);
         
@@ -97,7 +103,7 @@ public static final int BARRA_SUP          = 30;
             }
             posFim = posIni + i;
             //vamos inicializar um ArratList para jogar as carta de inicialização da nossa pilha nele
-            ArrayList<Carta> cartasParaMonte = new ArrayList<Carta>();
+            ArrayList<Carta> cartasParaMonte = new ArrayList<>();
             //vamos pegar as carta da posição inicial até a final
             for (int j = posIni; j <= posFim; j++) {
                 cartasParaMonte.add(baralhoCompleto.get(j));
@@ -115,15 +121,18 @@ public static final int BARRA_SUP          = 30;
         mesa.add(pilhaCartaMonte);
         pilhaCartaMonte.setPosicao(25, 30);
         
+        final JanelaPaciencia jp = this;
+        
         pilhaCartaMonte.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 PilhaCartaMonte pilhaCartaMonte = (PilhaCartaMonte) evt.getSource();
-                pilhaCartaMonte.onClick(mesa);
+                pilhaCartaMonte.onClick(mesa, jp);
                 //cada vez que o monte for clicado e estiver sendo reiniciado, vamo deduzir 30 pontos do jogador
                 if(pilhaCartaMonte.isReiniciada()){
                     adicionaPontos(-30);
                 }
+                this.mouseExited(evt);
             }
         });
         

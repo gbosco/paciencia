@@ -1,8 +1,10 @@
 
+import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 
 
@@ -10,9 +12,19 @@ public class PilhaCartaMonte extends PilhaCarta{
     private Pilha<Carta> pilhaCartaEscondida = new Pilha<Carta>();
     private boolean virarTres;
     private ArrayList<Carta> ultimasTres = new ArrayList<Carta>();
+    private static int countAux;
 
     public PilhaCartaMonte(boolean virarTres) {
         this.virarTres = virarTres;
+        
+        /**
+         * @TODO REMOVER
+        */
+        JLabel pic = new JLabel(new javax.swing.ImageIcon(getClass().getResource("/CARTAS/fundo.GIF")));
+        this.add(pic);
+        
+        countAux = 0;
+        
     }
     
     @Override
@@ -50,6 +62,8 @@ public class PilhaCartaMonte extends PilhaCarta{
         for(Carta cartaAtual : cartasIniciaisDoMonte){
             this.pilhaCartaEscondida.push(cartaAtual);
         }
+        //JLabel pic = new JLabel(new javax.swing.ImageIcon(getClass().getResource("/CARTAS/vazio.GIF")));
+        ///this.add(pic);
     }
 
     @Override
@@ -61,7 +75,8 @@ public class PilhaCartaMonte extends PilhaCarta{
         }
     }
     
-    public void onClick(JLayeredPane mesa){
+    public void onClick(JLayeredPane mesa, JanelaPaciencia jp){
+        
         //Se não houver mais cartas escondicas para ser reveladas, iremos voltar todas as cartas para o monte escondido
         if(this.pilhaCartaEscondida.isEmpty()){
             //enquando a pilha de cartas que amontoamos não estiver vazia, removeremos a carta do topo e voltaremos para o monte escondido
@@ -74,6 +89,7 @@ public class PilhaCartaMonte extends PilhaCarta{
                 posicionaCarta(carta);
             }
             mesa.moveToFront(this);
+
             //não haverá mais três ultimas viradas pois o monte foi reiniciado
             ultimasTres.clear();
         }else{
@@ -91,6 +107,22 @@ public class PilhaCartaMonte extends PilhaCarta{
                 super.forcaInsercao(this.pilhaCartaEscondida.pop(), mesa);
             }
         }
+        
+        String imgAux = "";
+        if(this.pilhaCartaEscondida.isEmpty()){
+            imgAux = "vazio";
+        }else{
+            imgAux = "fundo";
+        }
+        
+        JLabel pic = new JLabel(new javax.swing.ImageIcon(getClass().getResource("/CARTAS/"+imgAux+".GIF")));
+        this.removeAll();
+        this.add(pic);            
+        
+        int aux = 1;
+        if (countAux++ % 2 == 0) aux = -1;
+        jp.setSize(jp.getWidth()+ aux, jp.getHeight() + aux);
+        
     }
     
     private void reposicionaTodasTresViradas(){
